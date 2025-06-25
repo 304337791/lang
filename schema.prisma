@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  passwordHash String
+  sessions  Session[]
+  favorites Favorite[]
+}
+
+model Session {
+  id        String     @id @default(uuid())
+  user      User?      @relation(fields: [userId], references: [id])
+  userId    String?
+  createdAt DateTime   @default(now())
+  questions Question[]
+}
+
+model Question {
+  id          String            @id @default(uuid())
+  session     Session           @relation(fields: [sessionId], references: [id])
+  sessionId   String
+  index       Int
+  stem        String
+  userAnswer  String?
+  correctAns  String
+  analysis    String
+  grammars    QuestionGrammar[]
+  vocabularies QuestionVocab[]
+  favorites   Favorite[]
+}
+
+model GrammarPoint {
+  id       String           @id @default(uuid())
+  name     String           @unique
+  tips     String
+  questions QuestionGrammar[]
+}
+
+model Vocabulary {
+  id        String          @id @default(uuid())
+  word      String
+  phonetic  String
+  pos       String
+  roots     String
+  expands   String
+  meaningCN String
+  questions QuestionVocab[]
+}
+
+model QuestionGrammar {
+  question   Question   @relation(fields: [questionId], references: [id])
+  questionId String
+  grammar    GrammarPoint @relation(fields: [grammarId], references: [id])
+  grammarId  String
+  @@id([questionId, grammarId])
+}
+
+model QuestionVocab {
+  question Question   @relation(fields: [questionId], references: [id])
+  questionId String
+  vocab     Vocabulary @relation(fields: [vocabId], references: [id])
+  vocabId   String
+  @@id([questionId, vocabId])
+}
+
+model Favorite {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId String
+  createdAt  DateTime @default(now())
+} 
