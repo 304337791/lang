@@ -2,7 +2,7 @@ import React from "react";
 import { prisma } from "../../../lib/prisma";
 import ResultCard from "../../../components/ResultCard";
 
-export default async function ResultPage({ params }: { params: { sessionId: string } }) {
+export default async function ResultPage({ params }: any) {
   const { sessionId } = params;
   const session = await prisma.session.findUnique({
     where: { id: sessionId },
