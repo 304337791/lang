@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: any) {
   const { id } = params;
   try {
     const session = await prisma.session.findUnique({
@@ -27,7 +27,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: any) {
   try {
     const { id } = params;
     await prisma.questionVocab.deleteMany({ where: { question: { sessionId: id } } });
